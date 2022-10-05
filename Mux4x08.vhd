@@ -16,6 +16,6 @@ architecture logic of Mux4x08 is
 begin
     q <= a when sel = "00" else
          b when sel = "01" else
-         c when sel = "11" else
+         c when sel = "10" else
          d;
 end logic;
