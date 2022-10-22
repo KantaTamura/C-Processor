@@ -127,4 +127,139 @@ architecture logic of Controler is
 
 begin
     one <= '1';
+
+    --
+
+    JCextA : Johnson1L01 port map(cJCextA, cs1, clock, reset, qJCextA);
+    JCextB : Johnson1L01 port map(cJCextB, cs2, clock, reset, qJCextB);
+    JCextC : Johnson2L0  port map(cJCextC, clock, reset, qJCextC);
+    JCextD : Johnson2L0  port map(cJCextD, clock, reset, qJCextD);
+    JCextE : Johnson3L0  port map(cJCextE, clock, reset, qJCextE);
+
+    --
+
+    selMuxDOut <= "01" when qJCextD = "01" else
+                  "01" when qJCextD = "11" else
+                  "01" when qJCextD = "10" else
+                  "10" when qJCextE = "111" else
+                  "10" when qJCextE = "110" else
+                  "10" when qJCextE = "100" else
+                  "00";
+
+    selMuxAddr <= '1' when qJCextB = '1' else
+                  '1' when qJCextC = "01" else
+                  '1' when qJCextC = "11" else
+                  '1' when qJCextC = "10" else
+                  '1' when qJCextD = "01" else
+                  '1' when qJCextD = "11" else
+                  '1' when qJCextD = "10" else
+                  '1' when qJCextE = "111" else
+                  '1' when qJCextE = "110" else
+                  '1' when qJCextE = "100" else
+                  '0';
+
+    read <= '0' when qJCextA = '1' else
+            '0' when qJCextB = '1' else
+            '0' when qJCextE = "001" else
+            '0' when qJCextE = "011" else
+            '1';
+
+    write <= '0' when qJCextC = "11" else
+             '0' when qJCextD = "11" else
+             '0' when qJCextE = "110" else
+             '1';
+
+    --
+
+    JCintA : Johnson1L1 port map(cact, clock, reset, qJCintA);
+    JCintB : Johnson2L0 port map(cJCintB, clock, reset, qJCintB);
+    JCintC : Johnson2L0 port map(cJCintC, clock, reset, qJCintC);
+    JCintD : Johnson1L0 port map(cJCintD, clock, reset, qJCintD);
+    JCintE : Johnson2L0 port map(cJCintE, clock, reset, qJCintE);
+    JCintF : Johnson3L0 port map(cJCintF, clock, reset, qJCintF);
+
+    --
+
+    cJCextA <= '1' when qJCintA = '0' else
+               '1' when qJCintB = "10" and irout(7 downto 4) = "1101" else -- SETIXH, SETIXL, LDIA, LDIB
+               '1' when qJCintB = "10" and irout(7 downto 4) = "0110" else -- JP
+               '1' when qJCintB = "10" and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
+               '1' when qJCintB = "10" and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
+               '1' when qJCintC = "11" and irout(7 downto 4) = "1110" else -- LDDA, LDDB
+               '1' when qJCintD = '1' else
+               '1' when qJCintE = "10" else
+               '1' when qJCintF = "100" else
+               '0';
+
+    cJCextB <= '1' when qJCintB = "10" and irout(7 downto 4) = "1110" else -- LDDA, LDDB
+               '0';
+
+    cJCextC <= '1' when qJCintB = "10" and irout(7 downto 2) = "111100" else -- STDA
+               '0';
+
+    cJCextD <= '1' when qJCintB = "10" and irout(7 downto 2) = "111101" else -- STDB
+               '0';
+
+    cJCextE <= '1' when qJCintB = "10" and irout(7 downto 2) = "111110" else -- STDI
+               '0';
+
+    cs1 <= '1' when qJCintB = "11" else
+           '1' when qJCintF = "110" and irout(7 downto 4) = "0110" else -- JP
+           '1' when qJCintF = "110" and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
+           '1' when qJCintF = "110" and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
+           '0';
+
+    cs2 <= '1' when qJCintC = "10" and irout(7 downto 4) = "1110" else -- LDDA, LDDB
+           '0';
+
+    --
+
+    cact <= '0';
+
+    cJCintB <= '1' when qJCintA = '0'   else
+               '1' when qJCintC = "11"  else
+	           '1' when qJCintD = '1'   else
+	           '1' when qJCintE = "10"  else
+	           '1' when qJCintF = "100" else
+	           '0';
+    
+    cJCintC <= '1' when qJCintB = "10" and irout(7 downto 4) = "1101" else -- SETIXH SETIXL LDIA LDIB
+               '1' when qJCintB = "10" and irout(7 downto 4) = "1110" else -- LDDA, LDDB
+               '0';
+
+    cJCintD <= '1' when qJCintB = "10" and irout(7 downto 4) = "0000" else -- NOP
+               '1' when qJCintB = "10" and irout(7 downto 6) = "10" else -- calc
+               '1' when qJCintB = "10" and irout(7 downto 4) = "0100" and CarryF = '0' else -- JPC (C = 0)
+               '1' when qJCintB = "10" and irout(7 downto 4) = "0101" and ZeroF = '0' else -- JPZ (Z = 0)
+               '0';
+
+    cJCintE <= '1' when qJCintB = "10" and irout(7 downto 3) = "11110" else -- STDA, STDB
+               '0';
+        
+    cJCintF <= '1' when qJCintB = "10" and irout(7 downto 2) = "111110" else -- STDI
+               '1' when qJCintB = "10" and irout(7 downto 4) = "0110" else -- JP
+               '1' when qJCintB = "10" and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
+               '1' when qJCintB = "10" and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
+               '0';
+
+    --
+
+    loadRegA <= 
+    loadRegB <= 
+    loadRegC <= 
+    loadFC <= 
+    loadFZ <= 
+    loadIR <= 
+    loadhIX <= 
+    loadlIX <= 
+    loadhMB <= 
+    loadlMB <= 
+    loadIP <= 
+    selMuxDin <= 
+    incIP <= 
+    inc2IP <= 
+    clearIP <= 
+    cinALU <= 
+    modeALU <= 
+
 end logic;
