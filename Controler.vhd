@@ -244,22 +244,70 @@ begin
 
     --
 
-    loadRegA <= 
-    loadRegB <= 
-    loadRegC <= 
-    loadFC <= 
-    loadFZ <= 
-    loadIR <= 
-    loadhIX <= 
-    loadlIX <= 
-    loadhMB <= 
-    loadlMB <= 
-    loadIP <= 
-    selMuxDin <= 
-    incIP <= 
-    inc2IP <= 
-    clearIP <= 
-    cinALU <= 
-    modeALU <= 
+    loadRegA <= '1' when qJCintC = "11" and irout = "11011000" else -- LDIA
+                '1' when qJCintC = "11" and irout = "11100000" else -- LDDA
+                '1' when qJCintD = '1' and irout(7 downto 4) = "1000" else -- calcA
+                '0';
+
+    loadRegB <= '1' when qJCintC = "11" and irout = "11011001" else -- LDIB
+                '1' when qJCintC = "11" and irout = "11100001" else -- LDDB
+                '1' when qJCintD = '1' and irout(7 downto 4) = "1001" else -- calcB
+                '0';
+
+    loadRegC <= '1' when qJCintF = "011" and irout(7 downto 3) = "11111" else -- STDI
+                '0';
+
+    loadFC <= '1' when qJCintD = '1' and irout(7 downto 6) = "10" else -- calc
+              '0';
+
+    loadFZ <= '1' when qJCintD = '1' and irout(7 downto 6) = "10" else -- calc
+              '0';
+
+    loadIR <= '1' when qJCintB = "11" else
+              '0';
+
+    loadhIX <= '1' when qJCintC = "11" and irout = "11010000" else -- SETIXH
+               '0'; 
+
+    loadlIX <= '1' when qJCintC = "11" and irout = "11010001" else -- SETIXL
+               '0'; 
+
+    loadhMB <= '1' when qJCintF = "011" and irout(7 downto 4) = "0110" else -- JP
+               '1' when qJCintF = "011" and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
+               '1' when qJCintF = "011" and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
+               '0';
+
+    loadlMB <= '1' when qJCintF = "110" and irout(7 downto 4) = "0110" else -- JP
+               '1' when qJCintF = "110" and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
+               '1' when qJCintF = "110" and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
+               '0';
+               
+    loadIP <= '1' when qJCintF = "100" and irout(7 downto 4) = "0110" else -- JP
+              '1' when qJCintF = "100" and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
+              '1' when qJCintF = "100" and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
+              '0';
+               
+    selMuxDin <= '1' when qJCintC = "01" and irout(7 downto 3) = "11011" else -- LDIA, LDIB
+                 '1' when qJCintC = "01" and irout(7 downto 4) = "1110" else -- LDDA, LDDB
+                 '1' when qJCintC = "11" and irout(7 downto 3) = "11011" else -- LDIA, LDIB
+                 '1' when qJCintC = "11" and irout(7 downto 4) = "1110" else -- LDDA, LDDB
+                 '1' when qJCintF = "001" and irout(7 downto 3) = "11111" else -- STDI
+                 '1' when qJCintF = "011" and irout(7 downto 3) = "11111" else -- STDI
+                 '0';
+
+    incIP <= '1' when qJCintB = "10" else
+             '1' when qJCintC = "11" and irout(7 downto 4) = "1101" else -- SETIXH, SETIXL, LDIA, LDIB
+             '0';
+
+    inc2IP <= '1' when qJCintD = '1' and irout(7 downto 4) = "0110" else -- JP
+              '1' when qJCintD = '1' and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
+              '1' when qJCintD = '1' and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
+              '0';
+
+    clearIP <= '1' when qJCintA = '0' else
+               '0';
+
+    modeALU <= irout(3 downto 0) when qJCintD = '1' and irout(7 downto 6) = "10" else -- ADDA ADDB INCA DECA 
+             "0000";
 
 end logic;
