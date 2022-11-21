@@ -1,0 +1,73 @@
+-- [8000] : A : mul num
+-- [8001] : B : loop num
+-- [8002] : loop count
+-- [8003] : ans
+
+0000    D0      -- SETIXH
+0001    80      --
+0002    D1      -- SETIXL
+0003    00      --
+0004    D8      -- LDIA : A <- 22
+0005    22      --
+0006    D9      -- LDIB : B <- 00
+0007    00      --
+0008    F0      -- STDA : [8000] = 22
+0009    D1      -- SETIXL
+000a    01      --
+000b    F4      -- STDB : [8001] = 02
+000c    D1      -- SETIXL
+000d    02      --
+000e    F8      -- STDI : [8002] = 00
+000f    00      --
+0010    D1      -- SETIXL
+0011    03      --
+0012    F8      -- STDI : [8003] = 00
+0013    00      --
+
+
+
+-- A : loop num
+-- B : loop count
+-- A == B => IP <= 0050
+
+0014    D1      -- SETIXL
+0015    01      --
+0016    E0      -- LDDA : A = [8001]
+0017    D1      -- SETIXL
+0018    02      --
+0019    E1      -- LDDB : B = [8002]
+001a    A1      -- CMP
+001b    50      -- JPZ : IP = 0050
+001c    00
+001d    50
+
+-- inc loop count => save
+
+001e    99      -- INCB
+001f    F4      -- STDB
+
+-- A : mul num
+-- B : ans
+-- ans = ans + A => save
+
+0020    D1      -- SETIXL
+0021    00      --
+0022    E0      -- LDDA : A = [8000]
+0023    D1      -- SETIXL
+0024    03      --
+0025    E1      -- LDDB : B = [8003]
+0026    90      -- ADDB
+0027    F4      -- STDB : [8003] = B
+
+-- loop
+
+0028    60      -- JP
+0029    00      --
+002a    14      --
+
+-- A <- ans([8003])
+
+0050    D1      -- SETIXL
+0051    03      --
+0052    E0      -- LDDA
+0053    FF

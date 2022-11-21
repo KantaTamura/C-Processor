@@ -38,13 +38,14 @@ architecture logic of ALU16 is
     signal in_A         : std_logic_vector(7 downto 0);
     signal in_B         : std_logic_vector(7 downto 0);
     signal cout_tmp     : std_logic;
+    signal cout_tmp2    : std_logic;
     signal cin_tmp      : std_logic;
 
 begin
 
     cin_tmp <= cin;
 
-    complement : RCAdder08 port map ("not"(b), "00000001", cin_tmp, complement_b, cout_tmp);
+    complement : RCAdder08 port map ("not"(b), "00000001", cin_tmp, complement_b, cout_tmp2);
 
     in_A <= b when mode = "1001" or mode = "1010" else a;
     in_B <= b            when mode = "0000" else

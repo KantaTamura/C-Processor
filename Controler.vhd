@@ -227,7 +227,7 @@ begin
                '1' when qJCintB = "10" and irout(7 downto 4) = "1110" else -- LDDA, LDDB
                '0';
 
-    cJCintD <= '1' when qJCintB = "10" and irout(7 downto 4) = "0000" else -- NOP
+    cJCintD <= '1' when qJCintB = "10" and irout(7 downto 6) = "00" else -- NOP
                '1' when qJCintB = "10" and irout(7 downto 6) = "10" else -- calc
                '1' when qJCintB = "10" and irout(7 downto 4) = "0100" and CarryF = '0' else -- JPC (C = 0)
                '1' when qJCintB = "10" and irout(7 downto 4) = "0101" and ZeroF = '0' else -- JPZ (Z = 0)
@@ -297,7 +297,6 @@ begin
 
     incIP <= '1' when qJCintB = "10" else
              '1' when qJCintC = "11" and irout(7 downto 4) = "1101" else -- SETIXH, SETIXL, LDIA, LDIB
-             '1' when qJCintD = '1' and irout(7 downto 6) = "00" else -- NOP
              '1' when qJCintF = "011" else
              '0';
 
