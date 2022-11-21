@@ -36,7 +36,7 @@ entity Controler is
         write : out std_logic;
 
         clock : in std_logic;
-        reset : in sed_logic;
+        reset : in std_logic
     );
 end Controler;
 
@@ -102,7 +102,7 @@ architecture logic of Controler is
     signal cJCextE : std_logic;
 
     signal cs1 : std_logic;
-    signal cs1 : std_logic;
+    signal cs2 : std_logic;
 
     --
 
