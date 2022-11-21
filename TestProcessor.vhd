@@ -99,7 +99,7 @@ begin
   end process;
 
   reset    <= '1',
-              '0' after clk_cycle * 2;
+              '0' after clk_cycle * 5;
 
 -------------------------------------------------------------------------------
 -- Instruction and Data Memory

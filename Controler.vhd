@@ -297,6 +297,8 @@ begin
 
     incIP <= '1' when qJCintB = "10" else
              '1' when qJCintC = "11" and irout(7 downto 4) = "1101" else -- SETIXH, SETIXL, LDIA, LDIB
+             '1' when qJCintD = '1' and irout(7 downto 6) = "00" else -- NOP
+             '1' when qJCintF = "011" else
              '0';
 
     inc2IP <= '1' when qJCintD = '1' and irout(7 downto 4) = "0110" else -- JP
