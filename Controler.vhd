@@ -300,9 +300,8 @@ begin
              '1' when qJCintF = "011" else
              '0';
 
-    inc2IP <= '1' when qJCintD = '1' and irout(7 downto 4) = "0110" else -- JP
-              '1' when qJCintD = '1' and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
-              '1' when qJCintD = '1' and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
+    inc2IP <= '1' when qJCintD = '1' and irout(7 downto 4) = "0100" and CarryF = '0' else -- JPC (C = 0)
+              '1' when qJCintD = '1' and irout(7 downto 4) = "0101" and ZeroF = '0' else -- JPZ (Z = 0)
               '0';
 
     clearIP <= '1' when qJCintA = '0' else
