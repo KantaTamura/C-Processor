@@ -23,7 +23,7 @@ entity ALU16 is
 end ALU16;
 
 architecture logic of ALU16 is
-    component RCAdder08
+    component CLAdder08
         port (
             x   : in  std_logic_vector(7 downto 0);
             y   : in  std_logic_vector(7 downto 0);
@@ -47,7 +47,7 @@ begin
 
     cin_tmp <= cin;
 
-    complement : RCAdder08 port map ("not"(b), "00000001", cin_tmp, complement_b, cout_tmp2);
+    complement : CLAdder08 port map ("not"(b), "00000001", cin_tmp, complement_b, cout_tmp2);
 
     in_A <= b when mode = "1001" or mode = "1010" else a;
     in_B <= b            when mode = "0000" else
@@ -56,7 +56,7 @@ begin
             "11111111"   when mode = "0110" or mode = "1010" else
             "00000000";
     
-    adder : RCAdder08 port map (in_A, in_B, cin_tmp, result_adder, cout_tmp);
+    adder : CLAdder08 port map (in_A, in_B, cin_tmp, result_adder, cout_tmp);
 
     zout <= '1' when result = "00000000" else '0';
     

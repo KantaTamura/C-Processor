@@ -15,7 +15,7 @@ entity Counter16 is
 end Counter16;
 
 architecture logic of Counter16 is
-    component RCAdder16
+    component CLAdder16
         port (
             x     : in  std_logic_vector(15 downto 0);
             y     : in  std_logic_vector(15 downto 0);
@@ -55,7 +55,7 @@ begin
     load_in <= '1' when load = '1' or inc = '1' or clear = '1' or inc2 = '1' else
                '0';
 
-    adder : RCAdder16 port map (result, data, zero, add_result, carry);
+    adder : CLAdder16 port map (result, data, zero, add_result, carry);
 
     data <= "0000000000000001" when inc = '1' else "0000000000000010";
     
