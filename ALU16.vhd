@@ -1,17 +1,19 @@
 -- mode
 -- 
--- "0000" : A + B -- "0100" : ^A    -- "1000" : ^B
--- "0001" : A - B -- "0101" : A + 1 -- "1001" : B + 1
--- "0010" : A & B -- "0110" : A - 1 -- "1010" : B - 1
--- "0011" : A | B
+-- "0000" : A + B -- "0100" : ^A     -- "1000" : ^B     -- "1100" : A
+-- "0001" : A - B -- "0101" : A + 1  -- "1001" : B + 1  -- "1101" : B
+-- "0010" : A & B -- "0110" : A - 1  -- "1010" : B - 1
+-- "0011" : A | B -- "0111" : A << C -- "1011" : A >> C
 
 library IEEE;
 use IEEE.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity ALU16 is
     port (
         a    : in  std_logic_vector(7 downto 0);
         b    : in  std_logic_vector(7 downto 0);
+        c    : in  std_logic_vector(7 downto 0);
         cin  : in  std_logic;
         mode : in  std_logic_vector(3 downto 0);
         fout : out std_logic_vector(7 downto 0);
@@ -67,6 +69,10 @@ begin
     result <= result_adder when mode = "0000" or mode = "0001" or mode = "0101" or mode = "0110" or mode = "1001" or mode = "1010" else
               (a and b)    when mode = "0010" else
               (a or  b)    when mode = "0011" else
+              a            when mode = "1100" else
+              b            when mode = "1101" else
+              std_logic_vector("sll"(unsigned(a), to_integer(unsigned(c)))) when mode = "0111" else
+              std_logic_vector("srl"(unsigned(a), to_integer(unsigned(c)))) when mode = "1011" else
               result_logic;
     
     fout <= result;

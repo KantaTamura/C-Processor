@@ -9,6 +9,7 @@ architecture behavior of TestALU16 is
 
     signal In_A    : std_logic_vector(7 downto 0);
     signal In_B    : std_logic_vector(7 downto 0);
+    signal In_C    : std_logic_vector(7 downto 0);
     signal Cin     : std_logic;
     signal modeALU : std_logic_vector(3 downto 0);
     signal Out_F   : std_logic_vector(7 downto 0);
@@ -19,6 +20,7 @@ architecture behavior of TestALU16 is
         port (
             a    : in  std_logic_vector(7 downto 0);
             b    : in  std_logic_vector(7 downto 0);
+            c    : in  std_logic_vector(7 downto 0);
             cin  : in  std_logic;
             mode : in  std_logic_vector(3 downto 0);
             fout : out std_logic_vector(7 downto 0);
@@ -28,7 +30,7 @@ architecture behavior of TestALU16 is
     end component;
 
 begin
-    ALU : ALU16 port map (In_A, In_B, Cin, modeALU, Out_F, Out_C, Out_Z);
+    ALU : ALU16 port map (In_A, In_B, In_C, Cin, modeALU, Out_F, Out_C, Out_Z);
 
     process
     begin
@@ -100,6 +102,14 @@ begin
         modeALU <= "1010";
         wait for STEP;
         modeALU <= "1011";
+        wait for STEP;
+        In_A    <= "00000010";
+        In_B    <= "00000011";
+        In_C    <= "00000001";
+        modeALU <= "1011";
+        wait for STEP;
+        In_C    <= "00000100";
+        modeALU <= "0111";
         wait for STEP;
     wait;
     end process;

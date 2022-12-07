@@ -75,6 +75,7 @@ architecture logic of DataPath is
         port (
             a    : in  std_logic_vector(7 downto 0);
             b    : in  std_logic_vector(7 downto 0);
+            c    : in  std_logic_vector(7 downto 0);
             cin  : in  std_logic;
             mode : in  std_logic_vector(3 downto 0);
             fout : out std_logic_vector(7 downto 0);
@@ -155,6 +156,6 @@ begin
     MuxAddr : Mux2x16 port map (qIP, qIX, selMuxAddr, Address);
     MuxDOut : Mux4x08 port map (qRegA, qRegB, qRegC, zero_vec, selMuxDOut, DataOut);
     IP      : Counter16 port map (clock, loadIP, qMB, incIP, inc2IP, clearIP, reset, qIP);
-    ALU     : ALU16 port map (qRegA, qRegB, zero, modeALU, foutALU, coutALU, zoutALU);
+    ALU     : ALU16 port map (qRegA, qRegB, qRegC, zero, modeALU, foutALU, coutALU, zoutALU);
 
 end logic;

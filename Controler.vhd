@@ -204,6 +204,8 @@ begin
                '0';
 
     cs1 <= '1' when qJCintB = "11" else
+           '1' when qJCintE = "11" and irout = "01110000" else -- SLL
+           '1' when qJCintE = "11" and irout = "01110001" else -- SRL
            '1' when qJCintF = "110" and irout(7 downto 4) = "0110" else -- JP
            '1' when qJCintF = "110" and irout(7 downto 4) = "0100" and CarryF = '1' else -- JPC (C = 1)
            '1' when qJCintF = "110" and irout(7 downto 4) = "0101" and ZeroF = '1' else -- JPZ (Z = 1)
@@ -231,9 +233,13 @@ begin
                '1' when qJCintB = "10" and irout(7 downto 6) = "10" else -- calc
                '1' when qJCintB = "10" and irout(7 downto 4) = "0100" and CarryF = '0' else -- JPC (C = 0)
                '1' when qJCintB = "10" and irout(7 downto 4) = "0101" and ZeroF = '0' else -- JPZ (Z = 0)
+               '1' when qJCintB = "10" and irout = "01110101" else -- MOVEA
+               '1' when qJCintB = "10" and irout = "01110100" else -- MOVEB 
                '0';
 
     cJCintE <= '1' when qJCintB = "10" and irout(7 downto 3) = "11110" else -- STDA, STDB
+               '1' when qJCintB = "10" and irout = "01110000" else -- SLL
+               '1' when qJCintB = "10" and irout = "01110001" else -- SRL
                '0';
         
     cJCintF <= '1' when qJCintB = "10" and irout(7 downto 2) = "111110" else -- STDI
@@ -247,20 +253,30 @@ begin
     loadRegA <= '1' when qJCintC = "11" and irout = "11011000" else -- LDIA
                 '1' when qJCintC = "11" and irout = "11100000" else -- LDDA
                 '1' when qJCintD = '1' and irout(7 downto 4) = "1000" else -- calcA
+                '1' when qJCintD = '1' and irout = "01110101" else -- MOVEA
+                '1' when qJCintE = "10" and irout = "01110000" else -- SLL
+                '1' when qJCintE = "10" and irout = "01110001" else -- SRL
                 '0';
 
     loadRegB <= '1' when qJCintC = "11" and irout = "11011001" else -- LDIB
                 '1' when qJCintC = "11" and irout = "11100001" else -- LDDB
                 '1' when qJCintD = '1' and irout(7 downto 4) = "1001" else -- calcB
+                '1' when qJCintD = '1' and irout = "01110100" else -- MOVEB
                 '0';
 
     loadRegC <= '1' when qJCintF = "011" and irout(7 downto 3) = "11111" else -- STDI
+                '1' when qJCintE = "11" and irout = "01110000" else -- SLL
+                '1' when qJCintE = "11" and irout = "01110001" else -- SRL
                 '0';
 
     loadFC <= '1' when qJCintD = '1' and irout(7 downto 6) = "10" else -- calc
+              '1' when qJCintE = "11" and irout = "01110000" else -- SLL
+              '1' when qJCintE = "11" and irout = "01110001" else -- SRL
               '0';
 
     loadFZ <= '1' when qJCintD = '1' and irout(7 downto 6) = "10" else -- calc
+              '1' when qJCintE = "11" and irout = "01110000" else -- SLL
+              '1' when qJCintE = "11" and irout = "01110001" else -- SRL
               '0';
 
     loadIR <= '1' when qJCintB = "11" else
@@ -293,10 +309,16 @@ begin
                  '1' when qJCintC = "11" and irout(7 downto 4) = "1110" else -- LDDA, LDDB
                  '1' when qJCintF = "001" and irout(7 downto 3) = "11111" else -- STDI
                  '1' when qJCintF = "011" and irout(7 downto 3) = "11111" else -- STDI
+                 '1' when qJCintE = "01" and irout = "01110000" else -- SLL
+                 '1' when qJCintE = "01" and irout = "01110001" else -- SRL
+                 '1' when qJCintE = "11" and irout = "01110000" else -- SLL
+                 '1' when qJCintE = "11" and irout = "01110001" else -- SRL
                  '0';
 
     incIP <= '1' when qJCintB = "10" else
              '1' when qJCintC = "11" and irout(7 downto 4) = "1101" else -- SETIXH, SETIXL, LDIA, LDIB
+             '1' when qJCintE = "11" and irout = "01110000" else -- SLL
+             '1' when qJCintE = "11" and irout = "01110001" else -- SRL
              '1' when qJCintF = "011" else
              '0';
 
@@ -308,6 +330,10 @@ begin
                '0';
 
     modeALU <= irout(3 downto 0) when qJCintD = '1' and irout(7 downto 6) = "10" else -- ADDA ADDB INCA DECA 
-             "0000";
+               "0111" when qJCintE = "10" and irout = "01110000" else -- SLL
+               "1011" when qJCintE = "10" and irout = "01110001" else -- SRL
+               "1101" when qJCintD = '1' and irout = "01110101" else -- MOVEA
+               "1100" when qJCintD = '1' and irout = "01110100" else -- MOVEB
+               "0000";
 
 end logic;
